@@ -1,6 +1,6 @@
 {
   "private": false,
-  "name": "dir-tree-js",
+  "name": "@fremango/dir-tree",
   "version": "0.0.1",
   "bin": {
     "dir-tree": "./bin/index.js"

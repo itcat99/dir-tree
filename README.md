@@ -5,10 +5,10 @@ Get a tree view of the directory structure.
 ## Install
 
 ```bash
-yarn add global dir-tree-js
+yarn add global @fremango/dir-tree
 
 #or
-npm i -g dir-tree-js
+npm i -g @fremango/dir-tree
 ```
 
 ## Usage
