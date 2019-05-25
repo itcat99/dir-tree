@@ -2,6 +2,8 @@
 
 Get a tree view of the directory structure.
 
+![screenshot](https://github.com/itcat99/dir-tree/blob/master/assets/screenshot.png)
+
 ## Install
 
 ```bash
