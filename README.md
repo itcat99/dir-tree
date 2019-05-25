@@ -2,6 +2,15 @@
 
 Get a tree view of the directory structure.
 
+## Install
+
+```bash
+yarn add global dir-tree-js
+
+#or
+npm i -g dir-tree-js
+```
+
 ## Usage
 
 ### Cli
