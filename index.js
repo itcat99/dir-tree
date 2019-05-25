@@ -1,39 +1,8 @@
 const fs = require("fs");
 const path = require("path");
+const chalk = require("chalk");
 
-// const CHAR_CODES = ["─", "│", "└", "├"]
-// const data = [{
-//   title: 'a',
-//   children: [{
-//     title: "a_1"
-//   }, {
-//     title: "a_2"
-//   }]
-// }, {
-//   title: 'b',
-//   children: [{
-//     title: "b_1"
-//   }, {
-//     title: "b_2",
-//     children: [{
-//       title: "b_2_1",
-//       children: [{
-//         title: "b_2_1-1",
-//         children: [{
-//           title: "b_2_1-1-1"
-//         },{
-//           title: "b_2_1-1-2"
-//         }]
-//       }, {
-//         title: "b_2_1-2"
-//       }]
-//     }, {
-//       title: "b_2_2"
-//     }, {
-//       title: "b_2_3"
-//     }]
-//   }]
-// }];
+// const chalk = new Chalk.Instance();
 
 /**
  * 扫描文件夹
@@ -59,11 +28,16 @@ function scanDir(opts) {
   for (const index in children) {
     const child = children[index];
     if (ignore.indexOf(child) >= 0) continue;
-    const resultItem = {
-      title: child
-    };
+
     const currentPath = path.join(absolutePath, child);
-    if (fs.statSync(currentPath).isDirectory() && noChild.indexOf(child) < 0) {
+    const isDir = fs.statSync(currentPath).isDirectory();
+
+    const resultItem = {
+      title: child,
+      isDir
+    };
+
+    if (isDir && noChild.indexOf(child) < 0) {
       if (deep !== 0 && currentDeep >= deep - 1) continue;
 
       resultItem.children = scanDir({
@@ -89,10 +63,9 @@ function scanDir(opts) {
  */
 function toTree(data, tree = "", deep = 0, last = false, lastList = []) {
   let pre = "├──";
-  let parentLast = last;
 
   data.forEach((item, index) => {
-    const { title, children } = item;
+    const { title, children, isDir } = item;
     if (index === data.length - 1) {
       pre = "└──";
       last = true;
@@ -102,7 +75,9 @@ function toTree(data, tree = "", deep = 0, last = false, lastList = []) {
 
     lastList[deep] = last;
 
-    const value = `${getSpace(deep, lastList)}${pre} ${title}\n`;
+    const value = `${getSpace(deep, lastList)}${pre} ${
+      isDir ? chalk.green(title) : title
+    }\n`;
     tree += value;
     if (children) {
       tree = toTree(children, tree, deep + 1, last, lastList);
@@ -138,8 +113,10 @@ module.exports = {
    * @param {string[]} opts.ignore 排除的目录
    * @param {string[]} opts.noChild 排除子目录的目录
    */
-  dirTree: ({ dir, deep, noChild, ignore }) => {
+  dirTree: ({ dir, deep, noChild, ignore, color }) => {
     const data = scanDir({ dir, deep, noChild, ignore });
+    chalk.enabled = color;
+
     return `\n${toTree(data)}`;
   },
   /**
