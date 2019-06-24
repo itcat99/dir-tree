@@ -37,6 +37,41 @@ const tree = dirTree({
 console.log("Tree: ", tree);
 ```
 
+## Apis
+
+### scanDir
+
+> Scan the directory with the configured options, return directory struct object
+
+scanDir(Options, callback)
+
+return `dirStruct`
+
+#### dirStruct
+
+| name     | type        | default | desc                                                                  |
+| -------- | ----------- | ------- | --------------------------------------------------------------------- |
+| name     | string      | ''      | directory name                                                        |
+| isDir    | boolean     | false   | is directory                                                          |
+| path     | string      | ''      | directory absolute path                                               |
+| children | dirStruct[] | []      | if isDir is `true`, `children` is this directory's children directory |
+
+#### callback
+
+> custom the structure of each item
+
+(itemStruct) => itemStruct
+
+| name       | type      | desc                      |
+| ---------- | --------- | ------------------------- |
+| itemStruct | dirStruct | directory's struct object |
+
+### dirTree
+
+> return a tree view of the directory structure.
+
+dirTree(options)
+
 ## Options
 
 ### deep

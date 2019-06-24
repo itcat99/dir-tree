@@ -17,12 +17,12 @@ const chalk = require("chalk");
  *
  * @return {object[]}
  */
-function scanDir(opts) {
+function scanDir(opts, cb) {
   const { dir, deep = 0, ignore = [], noChild = [] } = opts;
   let { currentDeep = 0, result = [] } = opts;
   const absolutePath = path.isAbsolute(dir)
-    ? path.resolve(process.cwd(), dir)
-    : dir;
+    ? dir
+    : path.resolve(process.cwd(), dir)
 
   const children = fs.readdirSync(absolutePath);
   for (const index in children) {
@@ -32,9 +32,10 @@ function scanDir(opts) {
     const currentPath = path.join(absolutePath, child);
     const isDir = fs.statSync(currentPath).isDirectory();
 
-    const resultItem = {
+    let resultItem = {
       title: child,
-      isDir
+      isDir,
+      path: currentPath,
     };
 
     if (isDir && noChild.indexOf(child) < 0) {
@@ -47,9 +48,10 @@ function scanDir(opts) {
         currentDeep: currentDeep + 1,
         result: [],
         deep
-      });
+      }, cb);
     }
 
+    if (cb) resultItem = cb(resultItem);
     result.push(resultItem);
   }
 
@@ -77,7 +79,7 @@ function toTree(data, tree = "", deep = 0, last = false, lastList = []) {
 
     const value = `${getSpace(deep, lastList)}${pre} ${
       isDir ? chalk.green(title) : title
-    }\n`;
+      }\n`;
     tree += value;
     if (children) {
       tree = toTree(children, tree, deep + 1, last, lastList);
@@ -128,6 +130,6 @@ module.exports = {
    * @param {string[]} opts.ignore 排除的目录
    * @param {string[]} opts.noChild 排除子目录的目录
    */
-  scanDir: ({ dir, deep, noChild, ignore }) =>
-    scanDir({ dir, deep, noChild, ignore })
+  scanDir: ({ dir, deep, noChild, ignore }, cb) =>
+    scanDir({ dir, deep, noChild, ignore }, cb)
 };
